@@ -1,15 +1,29 @@
 import apiClient from './apiClient';
 
-export const login = (email: string, password: string) => {
-  return apiClient.post('/auth/login', { email, password });
+interface LoginData {
+  email: string;
+  password: string;
+}
+
+interface RegisterData {
+  email: string;
+  password: string;
+}
+
+interface AuthResponse {
+  token: string;
+}
+
+export const login = (data: LoginData): Promise<AuthResponse> => {
+  return apiClient.post('/auth/login', data);
 };
 
-export const register = (email: string, password: string) => {
-  return apiClient.post('/auth/signup', { email, password });
+export const register = (data: RegisterData): Promise<AuthResponse> => {
+  return apiClient.post('/auth/signup', data);
 };
 
-export const inspectToken = (token: string) => {
-  return apiClient.get('/auth/debug/token', {
+export const validateToken = (token: string): Promise<{ valid: boolean }> => {
+  return apiClient.get('/auth/validate', {
     headers: { Authorization: `Bearer ${token}` }
   });
 };

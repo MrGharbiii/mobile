@@ -10,28 +10,65 @@ import { useTheme } from "../../context/ThemeContext";
 interface ButtonProps {
 	title: string;
 	onPress: () => void;
+	variant?: "primary" | "secondary" | "danger";
 	loading?: boolean;
-	style?: object;
+	disabled?: boolean;
+	fullWidth?: boolean;
+	icon?: React.ReactNode;
 }
 
-const Button: React.FC<ButtonProps> = ({
+export const Button: React.FC<ButtonProps> = ({
 	title,
 	onPress,
+	variant = "primary",
 	loading = false,
-	style = {},
+	disabled = false,
+	fullWidth = false,
+	icon,
 }) => {
 	const { theme } = useTheme();
 
+	const getVariantStyle = () => {
+		switch (variant) {
+			case "secondary":
+				return {
+					backgroundColor: theme.colors.card,
+					borderColor: theme.colors.border,
+					borderWidth: 1,
+				};
+			case "danger":
+				return { backgroundColor: theme.colors.notification };
+			default:
+				return { backgroundColor: theme.colors.primary };
+		}
+	};
+
 	return (
 		<TouchableOpacity
-			style={[styles.button, { backgroundColor: theme.colors.primary }, style]}
+			style={[
+				styles.button,
+				getVariantStyle(),
+				fullWidth && styles.fullWidth,
+				disabled && styles.disabled,
+			]}
 			onPress={onPress}
-			disabled={loading}
+			disabled={disabled || loading}
+			activeOpacity={0.8}
 		>
 			{loading ? (
 				<ActivityIndicator color="white" />
 			) : (
-				<Text style={styles.text}>{title}</Text>
+				<>
+					{icon && <View style={styles.iconContainer}>{icon}</View>}
+					<Text
+						style={[
+							styles.text,
+							{ color: variant === "secondary" ? theme.colors.text : "white" },
+						]}
+					>
+						{title}
+					</Text>
+				</>
 			)}
 		</TouchableOpacity>
 	);
@@ -39,16 +76,25 @@ const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
 	button: {
-		padding: 15,
+		paddingVertical: 12,
+		paddingHorizontal: 24,
 		borderRadius: 8,
 		alignItems: "center",
-		marginVertical: 10,
+		justifyContent: "center",
+		flexDirection: "row",
+		minHeight: 50,
+	},
+	fullWidth: {
+		width: "100%",
+	},
+	disabled: {
+		opacity: 0.6,
 	},
 	text: {
-		color: "white",
-		fontWeight: "bold",
 		fontSize: 16,
+		fontWeight: "600",
+	},
+	iconContainer: {
+		marginRight: 8,
 	},
 });
-
-export default Button;

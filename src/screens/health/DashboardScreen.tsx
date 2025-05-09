@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text, ScrollView } from "react-native";
-import { useTheme } from "../../../context/ThemeContext";
-import { getMeasurements } from "../../../api/health";
-import StatsCard from "../../../components/health/StatsCard";
-import BMICalculator from "../../../components/health/BMICalculator";
+import { useTheme } from "../../context/ThemeContext";
+import { getMeasurements } from "../../api/health";
+import StatsCard from "../../components/health/StatsCard";
+import BMICalculator from "../../components/health/BMICalculator";
 
 const DashboardScreen: React.FC = () => {
 	const { theme } = useTheme();
