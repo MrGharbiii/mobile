@@ -1,14 +1,15 @@
+// src/hooks/useTheme.ts
 import { useContext } from 'react';
-import { AuthContext, AuthContextType } from '../context/AuthContext';
+import { ThemeContext, ThemeContextType } from '../context/ThemeContext';
 
-const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
+const useTheme = (): ThemeContextType => {
+  const context = useContext(ThemeContext);
   
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useTheme must be used within a ThemeProvider');
   }
 
   return context;
 };
 
-export default useAuth;
+export default useTheme;
