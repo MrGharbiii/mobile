@@ -1,8 +1,8 @@
 import React from "react";
 import { View, StyleSheet, Text } from "react-native";
-import { useAuth } from "../../context/AuthContext";
-import { useTheme } from "../../context/ThemeContext";
-import { Button, Screen, ThemeToggle } from "../../components/common";
+import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
+import { Button, Screen, ThemeToggle } from "../components/common";
 
 const SettingsScreen: React.FC = () => {
 	const { logout } = useAuth();

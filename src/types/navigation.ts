@@ -7,7 +7,7 @@ export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   Dashboard: undefined;
-  Measurements: undefined;
+  Measurements: { id?: string };
   Lifestyle: undefined;
   Goals: undefined;
   MedicalHistory: undefined;
@@ -21,7 +21,7 @@ export type AuthStackParamList = {
 
 export type MainTabParamList = {
   Dashboard: undefined;
-  Measurements: undefined;
+  Measurements: { id?: string };
   Lifestyle: undefined;
   Goals: undefined;
   MedicalHistory: undefined;

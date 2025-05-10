@@ -16,7 +16,8 @@ interface AuthContextType {
 	logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export type { AuthContextType };
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 	children,
@@ -34,15 +35,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 	}, []);
 
 	const login = async (email: string, password: string) => {
-		const response = await apiLogin(email, password);
-		await storeToken(response.data);
-		setToken(response.data);
+		const response = await apiLogin({ email, password });
+		await storeToken(response.data.token);
+		setToken(response.data.token);
 	};
 
 	const register = async (email: string, password: string) => {
-		const response = await apiRegister(email, password);
-		await storeToken(response.data);
-		setToken(response.data);
+		const response = await apiRegister({ email, password });
+		await storeToken(response.data.token);
+		setToken(response.data.token);
 	};
 
 	const logout = async () => {

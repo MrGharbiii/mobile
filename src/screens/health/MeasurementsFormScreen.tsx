@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Text } from "react-native";
+import { View, StyleSheet, ScrollView, Text, Alert } from "react-native";
 import { useForm } from "react-hook-form";
 import { Button, Input, Screen } from "../../components/common";
 import { Picker } from "@react-native-picker/picker";
@@ -30,6 +30,7 @@ const MeasurementsFormScreen = () => {
 	} = useForm<MesuresDto>();
 	const [isLoading, setIsLoading] = useState(false);
 	const [existingData, setExistingData] = useState<MesuresDto | null>(null);
+	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		const loadData = async () => {
@@ -39,11 +40,15 @@ const MeasurementsFormScreen = () => {
 					setExistingData(data);
 					// Set form values from existing data
 					Object.entries(data).forEach(([key, value]) => {
-						setValue(key as keyof MesuresDto, value);
+						if (key in data) {
+							setValue(key as keyof MesuresDto, value as MesuresDto[keyof MesuresDto]);
+						}
 					});
 				}
+				setError(null);
 			} catch (error) {
 				console.error("Error loading measurements:", error);
+				setError("Failed to load measurements. Please try again.");
 			}
 		};
 		loadData();
@@ -51,11 +56,13 @@ const MeasurementsFormScreen = () => {
 
 	const onSubmit = async (data: MesuresDto) => {
 		setIsLoading(true);
+		setError(null);
 		try {
 			await saveMeasurements(data);
-			// Show success message
+			Alert.alert("Success", "Measurements saved successfully!");
 		} catch (error) {
 			console.error("Error saving measurements:", error);
+			setError("Failed to save measurements. Please try again.");
 		} finally {
 			setIsLoading(false);
 		}
@@ -64,6 +71,8 @@ const MeasurementsFormScreen = () => {
 	return (
 		<Screen>
 			<ScrollView contentContainerStyle={styles.container}>
+				{error && <Text style={styles.error}>{error}</Text>}
+				
 				<Text style={styles.sectionTitle}>Basic Information</Text>
 
 				<Input
@@ -83,7 +92,7 @@ const MeasurementsFormScreen = () => {
 					<Text style={styles.label}>Gender</Text>
 					<Picker
 						selectedValue={existingData?.gender}
-						onValueChange={(value) => setValue("gender", value)}
+						onValueChange={(value: string) => setValue("gender", value as "MALE" | "FEMALE")}
 						style={styles.picker}
 					>
 						{Object.entries(Gender).map(([key, value]) => (
@@ -132,12 +141,13 @@ const MeasurementsFormScreen = () => {
 
 				{/* Add more form fields for lifestyle, goals, and medical history */}
 
-				<Button
-					title={existingData ? "Update Measurements" : "Save Measurements"}
-					onPress={handleSubmit(onSubmit)}
-					loading={isLoading}
-					style={styles.submitButton}
-				/>
+				<View style={styles.submitButton}>
+					<Button
+						title={existingData ? "Update Measurements" : "Save Measurements"}
+						onPress={handleSubmit(onSubmit)}
+						loading={isLoading}
+					/>
+				</View>
 			</ScrollView>
 		</Screen>
 	);
@@ -167,6 +177,11 @@ const styles = StyleSheet.create({
 	},
 	submitButton: {
 		marginTop: 30,
+	},
+	error: {
+		color: "red",
+		marginBottom: 10,
+		textAlign: "center",
 	},
 });
 

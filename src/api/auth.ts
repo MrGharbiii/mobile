@@ -1,4 +1,5 @@
 import apiClient from './apiClient';
+import { AxiosResponse } from 'axios';
 
 interface LoginData {
   email: string;
@@ -14,16 +15,16 @@ interface AuthResponse {
   token: string;
 }
 
-export const login = (data: LoginData): Promise<AuthResponse> => {
-  return apiClient.post('/auth/login', data);
+export const login = (data: LoginData): Promise<AxiosResponse<AuthResponse>> => {
+  return apiClient.post<AuthResponse>('/auth/login', data);
 };
 
-export const register = (data: RegisterData): Promise<AuthResponse> => {
-  return apiClient.post('/auth/signup', data);
+export const register = (data: RegisterData): Promise<AxiosResponse<AuthResponse>> => {
+  return apiClient.post<AuthResponse>('/auth/signup', data);
 };
 
-export const validateToken = (token: string): Promise<{ valid: boolean }> => {
-  return apiClient.get('/auth/validate', {
+export const validateToken = (token: string): Promise<AxiosResponse<{ valid: boolean }>> => {
+  return apiClient.get<{ valid: boolean }>('/auth/validate', {
     headers: { Authorization: `Bearer ${token}` }
   });
 };

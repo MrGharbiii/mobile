@@ -8,7 +8,8 @@ interface ThemeContextType {
 	isDark: boolean;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+export type { ThemeContextType };
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
 	children,

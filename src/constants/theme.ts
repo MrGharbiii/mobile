@@ -9,6 +9,7 @@ export const lightTheme = {
     text: colors.dark,
     border: colors.secondary,
     notification: colors.danger,
+    textSecondary: colors.secondary,
   },
 };
 
@@ -21,5 +22,6 @@ export const darkTheme = {
     text: colors.light,
     border: colors.dark,
     notification: colors.danger,
+    textSecondary: colors.secondary,
   },
 };

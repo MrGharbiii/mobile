@@ -3,13 +3,19 @@ import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../context/AuthContext";
 import { Button, Input, Screen } from "../../components/common";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { AuthStackParamList } from "../../types/navigation";
+
+type LoginScreenProps = {
+	navigation: StackNavigationProp<AuthStackParamList, "Login">;
+};
 
 interface FormData {
 	email: string;
 	password: string;
 }
 
-const LoginScreen: React.FC = ({ navigation }) => {
+const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 	const { login, isLoading } = useAuth();
 	const {
 		control,

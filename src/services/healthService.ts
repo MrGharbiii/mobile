@@ -1,29 +1,37 @@
 import apiClient from '../api/apiClient';
 import { MesuresDto } from '../types/health';
+import { AxiosError } from 'axios';
 
-export const saveMeasurements = async (data: MesuresDto) => {
+interface ErrorResponse {
+  message: string;
+}
+
+export const saveMeasurements = async (data: MesuresDto): Promise<MesuresDto> => {
   try {
-    const response = await apiClient.post('/mesures', data);
+    const response = await apiClient.post<MesuresDto>('/mesures', data);
     return response.data;
   } catch (error) {
-    throw error;
+    const axiosError = error as AxiosError<ErrorResponse>;
+    throw new Error(axiosError.response?.data?.message || 'Failed to save measurements');
   }
 };
 
-export const updateMeasurements = async (data: MesuresDto) => {
+export const updateMeasurements = async (data: Partial<MesuresDto>): Promise<MesuresDto> => {
   try {
-    const response = await apiClient.patch('/mesures', data);
+    const response = await apiClient.patch<MesuresDto>('/mesures', data);
     return response.data;
   } catch (error) {
-    throw error;
+    const axiosError = error as AxiosError<ErrorResponse>;
+    throw new Error(axiosError.response?.data?.message || 'Failed to update measurements');
   }
 };
 
-export const getMeasurements = async () => {
+export const getMeasurements = async (): Promise<MesuresDto> => {
   try {
-    const response = await apiClient.get('/mesures');
+    const response = await apiClient.get<MesuresDto>('/mesures');
     return response.data;
   } catch (error) {
-    throw error;
+    const axiosError = error as AxiosError<ErrorResponse>;
+    throw new Error(axiosError.response?.data?.message || 'Failed to get measurements');
   }
 };

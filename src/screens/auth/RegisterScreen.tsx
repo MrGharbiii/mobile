@@ -3,6 +3,12 @@ import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../context/AuthContext";
 import { Button, Input, Screen } from "../../components/common";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { AuthStackParamList } from "../../types/navigation";
+
+type RegisterScreenProps = {
+	navigation: StackNavigationProp<AuthStackParamList, "Register">;
+};
 
 interface FormData {
 	email: string;
@@ -10,7 +16,7 @@ interface FormData {
 	confirmPassword: string;
 }
 
-const RegisterScreen: React.FC = ({ navigation }) => {
+const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
 	const { register, isLoading } = useAuth();
 	const {
 		control,
@@ -69,7 +75,7 @@ const RegisterScreen: React.FC = ({ navigation }) => {
 				label="Confirm Password"
 				rules={{
 					required: "Confirm your password",
-					validate: (value) =>
+					validate: (value: string) =>
 						value === watch("password") || "Passwords do not match",
 				}}
 				secureTextEntry

@@ -12,13 +12,13 @@ import SettingsScreen from "../../screens/SettingsScreen";
 
 const Tab = createBottomTabNavigator();
 
-const iconMap: Record<string, string> = {
-	Dashboard: "home",
-	Measurements: "body",
-	Lifestyle: "walk",
-	Goals: "ribbon",
-	MedicalHistory: "medkit",
-	Settings: "settings",
+const iconMap: Record<string, { active: keyof typeof Ionicons.glyphMap; inactive: keyof typeof Ionicons.glyphMap }> = {
+	Dashboard: { active: "home", inactive: "home-outline" },
+	Measurements: { active: "body", inactive: "body-outline" },
+	Lifestyle: { active: "walk", inactive: "walk-outline" },
+	Goals: { active: "trophy", inactive: "trophy-outline" },
+	MedicalHistory: { active: "medkit", inactive: "medkit-outline" },
+	Settings: { active: "settings", inactive: "settings-outline" },
 };
 
 const MainNavigator: React.FC = () => {
@@ -28,7 +28,7 @@ const MainNavigator: React.FC = () => {
 		<Tab.Navigator
 			screenOptions={({ route }) => ({
 				tabBarIcon: ({ focused, color, size }) => {
-					const iconName = `${iconMap[route.name]}${focused ? "" : "-outline"}`;
+					const iconName = focused ? iconMap[route.name].active : iconMap[route.name].inactive;
 					return <Ionicons name={iconName} size={size} color={color} />;
 				},
 				tabBarActiveTintColor: theme.colors.primary,

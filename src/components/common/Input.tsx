@@ -1,22 +1,25 @@
 import React from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, Control, FieldError, RegisterOptions, Path } from "react-hook-form";
 import { useTheme } from "../../context/ThemeContext";
 
-interface InputProps {
-	name: string;
+interface InputProps<T extends Record<string, any>> {
+	name: Path<T>;
 	label?: string;
 	placeholder?: string;
-	rules?: any;
+	rules?: Omit<RegisterOptions<T, Path<T>>, "valueAsNumber" | "valueAsDate" | "setValueAs">;
 	secureTextEntry?: boolean;
 	keyboardType?: "default" | "numeric" | "email-address" | "phone-pad";
 	multiline?: boolean;
 	numberOfLines?: number;
 	prefix?: React.ReactNode;
 	suffix?: React.ReactNode;
+	control: Control<T>;
+	error?: FieldError;
+	autoCapitalize?: "none" | "sentences" | "words" | "characters";
 }
 
-export const Input: React.FC<InputProps> = ({
+export const Input = <T extends Record<string, any>>({
 	name,
 	label,
 	placeholder,
@@ -27,11 +30,10 @@ export const Input: React.FC<InputProps> = ({
 	numberOfLines = 1,
 	prefix,
 	suffix,
-}) => {
-	const {
-		control,
-		formState: { errors },
-	} = useFormContext();
+	control,
+	error,
+	autoCapitalize,
+}: InputProps<T>) => {
 	const { theme } = useTheme();
 
 	return (
@@ -48,7 +50,7 @@ export const Input: React.FC<InputProps> = ({
 						style={[
 							styles.inputContainer,
 							{
-								borderColor: errors[name]
+								borderColor: error
 									? theme.colors.notification
 									: theme.colors.border,
 							},
@@ -65,13 +67,14 @@ export const Input: React.FC<InputProps> = ({
 							]}
 							onBlur={onBlur}
 							onChangeText={onChange}
-							value={value}
+							value={typeof value === 'string' ? value : value?.toString() ?? ''}
 							placeholder={placeholder}
 							placeholderTextColor={theme.colors.textSecondary}
 							secureTextEntry={secureTextEntry}
 							keyboardType={keyboardType}
 							multiline={multiline}
 							numberOfLines={numberOfLines}
+							autoCapitalize={autoCapitalize}
 						/>
 						{suffix && <View style={styles.suffix}>{suffix}</View>}
 					</View>
@@ -79,9 +82,9 @@ export const Input: React.FC<InputProps> = ({
 				name={name}
 				rules={rules}
 			/>
-			{errors[name] && (
+			{error && (
 				<Text style={[styles.error, { color: theme.colors.notification }]}>
-					{errors[name].message}
+					{error.message?.toString()}
 				</Text>
 			)}
 		</View>

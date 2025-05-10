@@ -1,6 +1,7 @@
 // src/utils/notifications.ts
 import * as Notifications from 'expo-notifications';
 import { NavigationProp } from '@react-navigation/native';
+import { MainTabParamList } from '../types/navigation';
 
 // Configure notification handler
 Notifications.setNotificationHandler({
@@ -8,27 +9,22 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: false,
     shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true
   }),
 });
 
-export const scheduleDailyReminder = async (time: Date) => {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "Daily Check-in Reminder",
-      body: "Don't forget to log your daily health metrics!",
-    },
-    trigger: {
-      hour: time.getHours(),
-      minute: time.getMinutes(),
-      repeats: true,
-    },
+export const showDailyReminder = async () => {
+  await Notifications.presentNotificationAsync({
+    title: "Daily Check-in Reminder",
+    body: "Don't forget to log your daily health metrics!"
   });
 };
 
-export const handleNotificationTap = (navigation: NavigationProp<any>) => {
+export const handleNotificationTap = (navigation: NavigationProp<MainTabParamList>) => {
   const subscription = Notifications.addNotificationResponseReceivedListener(
-    (response) => {
-      navigation.navigate('Measurements');
+    (response: Notifications.NotificationResponse) => {
+      navigation.navigate('Measurements', { id: undefined });
     }
   );
 

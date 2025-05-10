@@ -1,4 +1,6 @@
 // src/utils/validators.ts
+import { MesuresDto } from '../types/health';
+
 export const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(String(email).toLowerCase());
@@ -8,7 +10,7 @@ export const validateEmail = (email: string) => {
     return password.length >= 8;
   };
   
-  export const validateMeasurements = (data: any) => {
+  export const validateMeasurements = (data: MesuresDto) => {
     const errors: Record<string, string> = {};
   
     if (!data.age || data.age < 12 || data.age > 120) {

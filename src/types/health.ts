@@ -14,27 +14,27 @@ import {
   
   export interface MesuresDto {
     age: number;
-    gender: Gender;
+    gender: typeof Gender[keyof typeof Gender];
     height: number;
     currentWeight: number;
     targetWeight: number;
     avgSleepHours: number;
-    activityLevel: ActivityLevel;
+    activityLevel: typeof ActivityLevel[keyof typeof ActivityLevel];
     isSmoker: boolean;
-    alcoholConsumption: AlcoholConsumption;
+    alcoholConsumption: typeof AlcoholConsumption[keyof typeof AlcoholConsumption];
     foodPreferences: string[];
-    natureOfWork: NatureOfWork;
+    natureOfWork: typeof NatureOfWork[keyof typeof NatureOfWork];
     usualWakeUpTime?: string;
     usualSleepTime?: string;
-    napDuration?: NapDuration;
+    napDuration?: typeof NapDuration[keyof typeof NapDuration];
     waterIntakeLiters: number;
-    stressLevel: StressLevel;
-    workoutRoutine: WorkoutRoutine;
+    stressLevel: typeof StressLevel[keyof typeof StressLevel];
+    workoutRoutine: typeof WorkoutRoutine[keyof typeof WorkoutRoutine];
     workoutAverageHours: number;
     dailyTimeAvailabilityHours: number;
-    primaryHealthGoal: HealthGoal;
-    workoutPreferences: WorkoutPreference[];
-    dietaryRestrictions: DietaryRestriction[];
+    primaryHealthGoal: typeof HealthGoal[keyof typeof HealthGoal];
+    workoutPreferences: Array<typeof WorkoutPreference[keyof typeof WorkoutPreference]>;
+    dietaryRestrictions: Array<typeof DietaryRestriction[keyof typeof DietaryRestriction]>;
     allergies: string[];
     chronicConditions: string[];
     surgeries: Surgery[];
