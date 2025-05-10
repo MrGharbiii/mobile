@@ -19,6 +19,7 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export type { AuthContextType };
 
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 	children,
 }) => {
@@ -43,6 +44,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 	const register = async (email: string, password: string) => {
 		const response = await apiRegister({ email, password });
 		await storeToken(response.data.token);
+		console.log(response.data.token);
+		console.log("register");
+		
+		
 		setToken(response.data.token);
 	};
 
