@@ -3,6 +3,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const TOKEN_KEY = '@auth_token';
 
 export const storeToken = async (token: string): Promise<void> => {
+  if (!token) {
+    throw new Error('Cannot store empty token');
+  }
   try {
     await AsyncStorage.setItem(TOKEN_KEY, token);
   } catch (error) {

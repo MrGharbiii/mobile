@@ -20,6 +20,9 @@ export const authenticate = async (email: string, password: string): Promise<str
 export const registerUser = async (email: string, password: string): Promise<string> => {
   try {
     const response = await register({ email, password });
+    if (!response.data?.token) {
+      throw new Error('Registration succeeded but no token received');
+    }
     await storeToken(response.data.token);
     return response.data.token;
   } catch (error) {

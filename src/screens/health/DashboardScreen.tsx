@@ -17,6 +17,9 @@ const DashboardScreen: React.FC = () => {
 			try {
 				const response = await getMeasurements();
 				setMeasurements(response.data);
+				
+				console.log(measurements);
+				
 				setError(null);
 			} catch (error) {
 				console.error("Error loading measurements:", error);
@@ -67,7 +70,7 @@ const DashboardScreen: React.FC = () => {
 			</Text>
 
 			<StatsCard
-				currentWeight={measurements.currentWeight}
+				currentWeight={measurements.age}
 				targetWeight={measurements.targetWeight}
 				height={measurements.height}
 			/>

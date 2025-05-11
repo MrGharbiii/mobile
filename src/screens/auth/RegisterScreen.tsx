@@ -29,7 +29,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
 	const onSubmit = async (data: FormData) => {
 		try {
 			await register(data.email, data.password);
-		} catch (err) {
+		} catch (error) {
 			setError("Registration failed. Please try again.");
 		}
 	};
