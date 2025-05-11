@@ -14,22 +14,31 @@ const DashboardScreen: React.FC = () => {
 
 	useEffect(() => {
 		const loadData = async () => {
-			try {
-				const response = await getMeasurements();
-				setMeasurements(response.data);
-				
-				console.log(measurements);
-				
-				setError(null);
-			} catch (error) {
-				console.error("Error loading measurements:", error);
-				setError("Failed to load measurements. Please try again.");
-			} finally {
-				setLoading(false);
+		  try {
+			console.log("Fetching measurements...");
+			const response = await getMeasurements();
+			console.log("API Response:", response);
+			
+			if (response.data) {
+			  setMeasurements(response.data);
+			  console.log("Measurements set:", response.data);
+			  console.log(measurements);
+			  
+			} else {
+			  setError("No measurements data received");
 			}
+		  } catch (error) {
+			console.error("Error loading measurements:", error);
+			setError(error instanceof Error ? error.message : "Failed to load measurements");
+		  } finally {
+			setLoading(false);
+		  }
 		};
+		
 		loadData();
-	}, []);
+	  }, []);
+	  
+	  
 
 	if (loading) {
 		return (
@@ -70,14 +79,14 @@ const DashboardScreen: React.FC = () => {
 			</Text>
 
 			<StatsCard
-				currentWeight={measurements.age}
-				targetWeight={measurements.targetWeight}
-				height={measurements.height}
+				currentWeight={measurements.basicInfo.currentWeight}
+				targetWeight={measurements.basicInfo.targetWeight}
+				height={measurements.basicInfo.height}
 			/>
 
 			<BMICalculator
-				weight={measurements.currentWeight}
-				height={measurements.height}
+				weight={measurements.basicInfo.currentWeight}
+				height={measurements.basicInfo.height}
 			/>
 		</ScrollView>
 	);
