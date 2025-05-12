@@ -6,7 +6,7 @@ import { getMeasurements, saveMeasurements } from "../../services/healthService"
 import StatsCard from "../../components/health/StatsCard";
 import BMICalculator from "../../components/health/BMICalculator";
 import { Button } from "../../components/common";
-// import MeasurementsFormPopup from "../../components/health/MeasurementsFormPopup";
+ import MeasurementsFormPopup from "../../components/health/MeasurementsFormPopup";
 
 const DashboardScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -36,7 +36,9 @@ const DashboardScreen: React.FC = () => {
   const handleSubmitMeasurements = async (formData: any) => {
     try {
       await saveMeasurements(formData);
-      await loadMeasurements(); // Refresh the data after submission
+      await loadMeasurements(); 
+	  console.log(measurements);
+	  
     } catch (error) {
       console.error("Error saving measurements:", error);
       setError("Failed to save measurements. Please try again.");
@@ -91,12 +93,12 @@ const DashboardScreen: React.FC = () => {
         />
       </ScrollView>
 
-      {/* <MeasurementsFormPopup
+      <MeasurementsFormPopup
         visible={showForm}
         onClose={() => setShowForm(false)}
         onSubmit={handleSubmitMeasurements}
         initialData={measurements}
-      /> */}
+      />
     </>
   );
 };
