@@ -12,16 +12,32 @@ export const saveMeasurements = async (data: any): Promise<MesuresDto> => {
   try {
     // Transform the data structure to match backend expectations
     const payload = {
-      basicInfo: data.basicInfo,
-      lifeStyleInfo: data.lifeStyleInfo,
-      goalsPreferences: data.goalsPreferences,
-      medicalHistory: data.medicalHistory || {
+      basicInfo: {
+        age: Number(data.basicInfo.age),
+        gender: data.basicInfo.gender,
+        height: Number(data.basicInfo.height),
+        currentWeight: Number(data.basicInfo.currentWeight),
+        targetWeight: Number(data.basicInfo.targetWeight),
+      },
+      lifeStyleInfo: {
+        activityLevel: data.lifeStyleInfo.activityLevel,
+        alcoholConsumption: data.lifeStyleInfo.alcoholConsumption,
+        avgSleepHours: Number(data.lifeStyleInfo.avgSleepHours),
+        stressLevel: data.lifeStyleInfo.stressLevel,
+        workoutRoutine: data.lifeStyleInfo.workoutRoutine,
+      },
+      goalsPreferences: {
+        primaryHealthGoal: data.goalsPreferences.primaryHealthGoal,
+      },
+      medicalHistory: {
         allergies: [],
         chronicConditions: [],
         surgeries: [],
         medications: []
       }
     };
+
+    console.log("Payload being sent:", payload);
 
     // Convert string numbers to actual numbers
     payload.basicInfo.age = Number(payload.basicInfo.age);
