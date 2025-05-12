@@ -1,112 +1,129 @@
+// src/screens/health/DashboardScreen.tsx
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text, ScrollView } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
-import { getMeasurements } from "../../api/health";
+import { getMeasurements, saveMeasurements } from "../../services/healthService";
 import StatsCard from "../../components/health/StatsCard";
 import BMICalculator from "../../components/health/BMICalculator";
-import { MesuresDto } from "../../types/health";
+import { Button } from "../../components/common";
+// import MeasurementsFormPopup from "../../components/health/MeasurementsFormPopup";
 
 const DashboardScreen: React.FC = () => {
-	const { theme } = useTheme();
-	const [measurements, setMeasurements] = useState<MesuresDto | null>(null);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+  const { theme } = useTheme();
+  const [measurements, setMeasurements] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
 
-	useEffect(() => {
-		const loadData = async () => {
-		  try {
-			console.log("Fetching measurements...");
-			const response = await getMeasurements();
-			console.log("API Response:", response);
-			
-			if (response.data) {
-			  setMeasurements(response.data);
-			  console.log("Measurements set:", response.data);
-			  console.log(measurements);
-			  
-			} else {
-			  setError("No measurements data received");
-			}
-		  } catch (error) {
-			console.error("Error loading measurements:", error);
-			setError(error instanceof Error ? error.message : "Failed to load measurements");
-		  } finally {
-			setLoading(false);
-		  }
-		};
-		
-		loadData();
-	  }, []);
-	  
-	  
+  const loadMeasurements = async () => {
+    try {
+      setLoading(true);
+      const data = await getMeasurements();
+      setMeasurements(data);
+      setError(null);
+    } catch (error) {
+      console.error("Error loading measurements:", error);
+      setError("Failed to load measurements. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-	if (loading) {
-		return (
-			<View
-				style={[styles.container, { backgroundColor: theme.colors.background }]}
-			>
-				<Text style={{ color: theme.colors.text }}>Loading...</Text>
-			</View>
-		);
-	}
+  useEffect(() => {
+    loadMeasurements();
+  }, []);
 
-	if (error) {
-		return (
-			<View
-				style={[styles.container, { backgroundColor: theme.colors.background }]}
-			>
-				<Text style={[styles.error, { color: theme.colors.notification }]}>{error}</Text>
-			</View>
-		);
-	}
+  const handleSubmitMeasurements = async (formData: any) => {
+    try {
+      await saveMeasurements(formData);
+      await loadMeasurements(); // Refresh the data after submission
+    } catch (error) {
+      console.error("Error saving measurements:", error);
+      setError("Failed to save measurements. Please try again.");
+    }
+  };
 
-	if (!measurements) {
-		return (
-			<View
-				style={[styles.container, { backgroundColor: theme.colors.background }]}
-			>
-				<Text style={{ color: theme.colors.text }}>No measurements found</Text>
-			</View>
-		);
-	}
+  if (loading) {
+    return (
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <Text style={{ color: theme.colors.text }}>Loading...</Text>
+      </View>
+    );
+  }
 
-	return (
-		<ScrollView
-			style={[styles.container, { backgroundColor: theme.colors.background }]}
-		>
-			<Text style={[styles.title, { color: theme.colors.text }]}>
-				Dashboard
-			</Text>
+  if (error) {
+    return (
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <Text style={[styles.error, { color: theme.colors.notification }]}>{error}</Text>
+      </View>
+    );
+  }
 
-			<StatsCard
-				currentWeight={measurements.basicInfo.currentWeight}
-				targetWeight={measurements.basicInfo.targetWeight}
-				height={measurements.basicInfo.height}
-			/>
+  if (!measurements) {
+    return (
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <Text style={{ color: theme.colors.text }}>No measurements found</Text>
+        <Button title="Add Measurements" onPress={() => setShowForm(true)} />
+      </View>
+    );
+  }
 
-			<BMICalculator
-				weight={measurements.basicInfo.currentWeight}
-				height={measurements.basicInfo.height}
-			/>
-		</ScrollView>
-	);
+  return (
+    <>
+      <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <View style={styles.header}>
+          <Text style={[styles.title, { color: theme.colors.text }]}>Dashboard</Text>
+          <Button 
+            title="Update Measurements" 
+            onPress={() => setShowForm(true)} 
+          />
+        </View>
+
+        <StatsCard
+          currentWeight={measurements.basicInfo.currentWeight}
+          targetWeight={measurements.basicInfo.targetWeight}
+          height={measurements.basicInfo.height}
+        />
+
+        <BMICalculator
+          weight={measurements.basicInfo.currentWeight}
+          height={measurements.basicInfo.height}
+        />
+      </ScrollView>
+
+      {/* <MeasurementsFormPopup
+        visible={showForm}
+        onClose={() => setShowForm(false)}
+        onSubmit={handleSubmitMeasurements}
+        initialData={measurements}
+      /> */}
+    </>
+  );
 };
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		padding: 20,
-	},
-	title: {
-		fontSize: 24,
-		fontWeight: "bold",
-		marginBottom: 20,
-	},
-	error: {
-		fontSize: 16,
-		textAlign: "center",
-		marginTop: 20,
-	},
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  updateButton: {
+    width: 180,
+  },
+  error: {
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 20,
+  },
 });
 
 export default DashboardScreen;

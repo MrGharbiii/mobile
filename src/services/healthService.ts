@@ -6,9 +6,31 @@ interface ErrorResponse {
   message: string;
 }
 
-export const saveMeasurements = async (data: MesuresDto): Promise<MesuresDto> => {
+
+
+export const saveMeasurements = async (data: any): Promise<MesuresDto> => {
   try {
-    const response = await apiClient.post<MesuresDto>('/mesures', data);
+    // Transform the data structure to match backend expectations
+    const payload = {
+      basicInfo: data.basicInfo,
+      lifeStyleInfo: data.lifeStyleInfo,
+      goalsPreferences: data.goalsPreferences,
+      medicalHistory: data.medicalHistory || {
+        allergies: [],
+        chronicConditions: [],
+        surgeries: [],
+        medications: []
+      }
+    };
+
+    // Convert string numbers to actual numbers
+    payload.basicInfo.age = Number(payload.basicInfo.age);
+    payload.basicInfo.height = Number(payload.basicInfo.height);
+    payload.basicInfo.currentWeight = Number(payload.basicInfo.currentWeight);
+    payload.basicInfo.targetWeight = Number(payload.basicInfo.targetWeight);
+    payload.lifeStyleInfo.avgSleepHours = Number(payload.lifeStyleInfo.avgSleepHours);
+
+    const response = await apiClient.post<MesuresDto>('/mesures', payload);
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError<ErrorResponse>;
