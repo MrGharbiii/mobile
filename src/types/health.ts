@@ -1,5 +1,5 @@
 // src/types/health.ts
-import {
+import type {
     ActivityLevel,
     AlcoholConsumption,
     DietaryRestriction,
@@ -12,15 +12,17 @@ import {
     WorkoutRoutine
   } from "../constants/enumMappings";
   
-  export interface MesuresDto {
+  export interface BasicInfo {
     age: number;
     gender: typeof Gender[keyof typeof Gender];
     height: number;
     currentWeight: number;
     targetWeight: number;
+}
+
+export interface LifeStyleInfo {
     avgSleepHours: number;
     activityLevel: typeof ActivityLevel[keyof typeof ActivityLevel];
-    isSmoker: boolean;
     alcoholConsumption: typeof AlcoholConsumption[keyof typeof AlcoholConsumption];
     foodPreferences: string[];
     natureOfWork: typeof NatureOfWork[keyof typeof NatureOfWork];
@@ -32,14 +34,28 @@ import {
     workoutRoutine: typeof WorkoutRoutine[keyof typeof WorkoutRoutine];
     workoutAverageHours: number;
     dailyTimeAvailabilityHours: number;
+    smoker: boolean;
+}
+
+export interface GoalsPreferences {
     primaryHealthGoal: typeof HealthGoal[keyof typeof HealthGoal];
     workoutPreferences: Array<typeof WorkoutPreference[keyof typeof WorkoutPreference]>;
     dietaryRestrictions: Array<typeof DietaryRestriction[keyof typeof DietaryRestriction]>;
+}
+
+export interface MedicalHistory {
     allergies: string[];
     chronicConditions: string[];
     surgeries: Surgery[];
     medications: string[];
-  }
+}
+
+export interface MesuresDto {
+    basicInfo: BasicInfo;
+    lifeStyleInfo: LifeStyleInfo;
+    goalsPreferences: GoalsPreferences;
+    medicalHistory: MedicalHistory;
+}
   
   export interface Surgery {
     name: string;

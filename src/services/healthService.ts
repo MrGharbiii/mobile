@@ -1,75 +1,44 @@
-import apiClient from '../api/apiClient';
-import { MesuresDto } from '../types/health';
-import { AxiosError } from 'axios';
+// src/services/healthService.ts
+import type { MesuresDto } from '../types/health';
+import type { AxiosError } from 'axios';
+import * as healthApi from '../api/health';
 
 interface ErrorResponse {
   message: string;
 }
 
-
-
-export const saveMeasurements = async (data: any): Promise<MesuresDto> => {
+export const getMeasurements = async (): Promise<MesuresDto | null> => {
   try {
-    // Transform the data structure to match backend expectations
-    const payload = {
-      basicInfo: {
-        age: Number(data.basicInfo.age),
-        gender: data.basicInfo.gender,
-        height: Number(data.basicInfo.height),
-        currentWeight: Number(data.basicInfo.currentWeight),
-        targetWeight: Number(data.basicInfo.targetWeight),
-      },
-      lifeStyleInfo: {
-        activityLevel: data.lifeStyleInfo.activityLevel,
-        alcoholConsumption: data.lifeStyleInfo.alcoholConsumption,
-        avgSleepHours: Number(data.lifeStyleInfo.avgSleepHours),
-        stressLevel: data.lifeStyleInfo.stressLevel,
-        workoutRoutine: data.lifeStyleInfo.workoutRoutine,
-      },
-      goalsPreferences: {
-        primaryHealthGoal: data.goalsPreferences.primaryHealthGoal,
-      },
-      medicalHistory: {
-        allergies: [],
-        chronicConditions: [],
-        surgeries: [],
-        medications: []
-      }
-    };
-
-    console.log("Payload being sent:", payload);
-
-    // Convert string numbers to actual numbers
-    payload.basicInfo.age = Number(payload.basicInfo.age);
-    payload.basicInfo.height = Number(payload.basicInfo.height);
-    payload.basicInfo.currentWeight = Number(payload.basicInfo.currentWeight);
-    payload.basicInfo.targetWeight = Number(payload.basicInfo.targetWeight);
-    payload.lifeStyleInfo.avgSleepHours = Number(payload.lifeStyleInfo.avgSleepHours);
-
-    const response = await apiClient.post<MesuresDto>('/mesures', payload);
+    const response = await healthApi.getMeasurements();
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError<ErrorResponse>;
-    throw new Error(axiosError.response?.data?.message || 'Failed to save measurements');
+    if (axiosError.response?.status === 404) {
+      // No measurements found for user - return null to trigger initial form
+      return null;
+    }
+    console.error('Error getting measurements:', axiosError.response?.data);
+    throw new Error(axiosError.response?.data?.message || 'Failed to get measurements');
   }
 };
 
 export const updateMeasurements = async (data: Partial<MesuresDto>): Promise<MesuresDto> => {
   try {
-    const response = await apiClient.patch<MesuresDto>('/mesures', data);
+    const response = await healthApi.updateMeasurements(data);
     return response.data;
   } catch (error) {
-    const axiosError = error as AxiosError<ErrorResponse>;
-    throw new Error(axiosError.response?.data?.message || 'Failed to update measurements');
-  }
-};
-
-export const getMeasurements = async (): Promise<MesuresDto> => {
-  try {
-    const response = await apiClient.get<MesuresDto>('/mesures');
-    return response.data;
-  } catch (error) {
-    const axiosError = error as AxiosError<ErrorResponse>;
-    throw new Error(axiosError.response?.data?.message || 'Failed to get measurements');
+    const axiosError = error as AxiosError<ErrorResponse>;    console.error('Error updating measurements:', axiosError.response?.data);if (axiosError.response?.status === 401 || axiosError.response?.status === 403) {
+      const error = new Error(
+        axiosError.response?.status === 401
+          ? 'Please log in again to update your measurements'
+          : 'You do not have permission to update measurements'
+      );
+      error.name = 'AuthError';
+      throw error;
+    }
+    if (axiosError.response?.status === 400) {
+      throw new Error(axiosError.response.data?.message || 'Invalid measurement values provided');
+    }
+    throw new Error(axiosError.response?.data?.message || `Failed to update measurements: ${axiosError.message}`);
   }
 };

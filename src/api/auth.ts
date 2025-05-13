@@ -1,5 +1,5 @@
 import apiClient from './apiClient';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 
 interface LoginData {
   email: string;
